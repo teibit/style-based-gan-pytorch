@@ -3,8 +3,8 @@ from torchvision import utils
 
 from model import StyledGenerator
 
-generator = StyledGenerator(512).cuda()
-generator.load_state_dict(torch.load('checkpoint/130000.model'))
+generator = StyledGenerator(512)
+generator.load_state_dict(torch.load('checkpoint/160000.model'))
 
 mean_style = None
 
@@ -13,7 +13,7 @@ step = 6
 shape = 4 * 2 ** step
 
 for i in range(10):
-    style = generator.mean_style(torch.randn(1024, 512).cuda())
+    style = generator.mean_style(torch.randn(1024, 512))
 
     if mean_style is None:
         mean_style = style
@@ -24,20 +24,20 @@ for i in range(10):
 mean_style /= 10
 
 image = generator(
-    torch.randn(50, 512).cuda(),
+    torch.randn(50, 512),
     step=step,
     alpha=1,
     mean_style=mean_style,
     style_weight=0.7,
 )
 
-utils.save_image(image, 'sample.png', nrow=10, normalize=True, range=(-1, 1))
+utils.save_image(image, 'doc/sample.png', nrow=10, normalize=True, range=(-1, 1))
 
 for j in range(20):
-    source_code = torch.randn(9, 512).cuda()
-    target_code = torch.randn(5, 512).cuda()
+    source_code = torch.randn(9, 512)
+    target_code = torch.randn(5, 512)
 
-    images = [torch.ones(1, 3, shape, shape).cuda() * -1]
+    images = [torch.ones(1, 3, shape, shape) * -1]
 
     source_image = generator(
         source_code, step=step, alpha=1, mean_style=mean_style, style_weight=0.7
@@ -65,5 +65,5 @@ for j in range(20):
     images = torch.cat(images, 0)
 
     utils.save_image(
-        images, f'sample_mixing_{j}.png', nrow=10, normalize=True, range=(-1, 1)
+        images, f'doc/sample_mixing_{j}.png', nrow=10, normalize=True, range=(-1, 1)
     )

@@ -2,7 +2,6 @@ import argparse
 import random
 import math
 
-from tqdm import tqdm
 import numpy as np
 from PIL import Image
 
@@ -63,8 +62,6 @@ def train(args, dataset, generator, discriminator):
     adjust_lr(g_optimizer, args.lr.get(resolution, 0.001))
     adjust_lr(d_optimizer, args.lr.get(resolution, 0.001))
 
-    pbar = tqdm(range(3_000_000))
-
     requires_grad(generator, False)
     requires_grad(discriminator, True)
 
@@ -75,7 +72,7 @@ def train(args, dataset, generator, discriminator):
     alpha = 0
     used_sample = 0
 
-    for i in pbar:
+    for i in range(3_000_000):
         discriminator.zero_grad()
 
         alpha = min(1, 1 / args.phase * (used_sample + 1))
@@ -243,7 +240,7 @@ def train(args, dataset, generator, discriminator):
             f' Grad: {grad_loss_val:.3f}; Alpha: {alpha:.5f}'
         )
 
-        pbar.set_description(state_msg)
+        print(state_msg)
 
 
 if __name__ == '__main__':
